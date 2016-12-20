@@ -85,7 +85,7 @@ func main() {
 			log.WithFields(log.Fields{
 				"EventName": "ws_client_message",
 				"Message":   msgStr,
-				"Room":      q.Request.URL.Path,
+				"Channel":   q.Request.URL.Path,
 			}).Debug("got msg: ", msgStr)
 
 			return q.Request.URL.Path == s.Request.URL.Path
