@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lacion/iothub/config"
+	"github.com/lacion/iothub/log"
 )
 
 // Strips 'Bearer ' prefix from bearer token string
@@ -23,11 +24,23 @@ func Auth() gin.HandlerFunc {
 		token, err := stripBearerPrefixFromTokenString(c.Request.Header.Get("Authorization"))
 
 		if err != nil {
+
+			log.WithFields(log.Fields{
+				"EventName": "middleware_auth_error",
+				"Error":     err.Error(),
+			}).Error("error while stripping bearer prefix ", err.Error())
+
 			c.AbortWithError(401, err)
 		}
 
 		cfg := config.Config()
 		if token != cfg.GetString("secret") {
+
+			log.WithFields(log.Fields{
+				"EventName": "middleware_auth_denied",
+				"Token":     token,
+			}).Error("Invalid token ", token)
+
 			c.AbortWithStatus(401)
 		}
 	}
