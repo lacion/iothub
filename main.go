@@ -31,13 +31,13 @@ func main() {
 
 	log.WithFields(log.Fields{
 		"EventName": "get_config_env_vars",
-	}).Info("Reading configuration from env vars")
+	}).Debug("Reading configuration from env vars")
 	cfg := config.Config()
 
 	log.WithFields(log.Fields{
 		"EventName": "set_gin_mode",
 		"Mode":      cfg.GetString("mode"),
-	}).Info("Setting gin mode to ", cfg.GetString("mode"))
+	}).Debug("Setting gin mode to ", cfg.GetString("mode"))
 	gin.SetMode(cfg.GetString("mode"))
 
 	r := gin.New()
@@ -60,14 +60,14 @@ func main() {
 		log.WithFields(log.Fields{
 			"EventName":     "ws_client_connect",
 			"RemoteAddress": s.Request.RemoteAddr,
-		}).Info("new ws client connected ", s.Request.RemoteAddr)
+		}).Debug("new ws client connected ", s.Request.RemoteAddr)
 	})
 
 	m.HandleDisconnect(func(s *melody.Session) {
 		log.WithFields(log.Fields{
 			"EventName":     "ws_client_disconnect",
 			"RemoteAddress": s.Request.RemoteAddr,
-		}).Info("ws client disconnected ", s.Request.RemoteAddr)
+		}).Debug("ws client disconnected ", s.Request.RemoteAddr)
 	})
 
 	m.HandleError(func(s *melody.Session, err error) {
@@ -75,7 +75,7 @@ func main() {
 			"EventName":     "ws_error",
 			"RemoteAddress": s.Request.RemoteAddr,
 			"Error":         err.Error(),
-		}).Error("error ocurred with ws client ", s.Request.RemoteAddr, err.Error())
+		}).Error("error ocurred with ws client ", err.Error())
 	})
 
 	m.HandleMessage(func(s *melody.Session, msg []byte) {
