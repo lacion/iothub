@@ -12,6 +12,7 @@ import (
 
 	"github.com/lacion/iothub/config"
 	"github.com/lacion/iothub/log"
+	"github.com/lacion/iothub/middlewares"
 )
 
 func main() {
@@ -43,8 +44,13 @@ func main() {
 	m := melody.New()
 
 	r.Use(ginrus.Ginrus(log.NewLogger(cfg), time.RFC3339, true))
+	r.Use(gin.Recovery())
 
-	r.GET("/channel/:name/ws", func(c *gin.Context) {
+	authorized := r.Group("/")
+
+	authorized.Use(middlewares.Auth())
+
+	authorized.GET("/channel/:name/ws", func(c *gin.Context) {
 		m.HandleRequest(c.Writer, c.Request)
 	})
 

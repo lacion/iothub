@@ -51,6 +51,7 @@ func readViperConfig(appName string) *viper.Viper {
 	v.SetDefault("loglevel", "debug")
 	v.SetDefault("mode", "debug") // debug, release, test
 	v.SetDefault("listen_address", ":5000")
+	v.SetDefault("secret", "887yff9898yfhuiew3489fy3hewfuig239f8ghew32yfh")
 
 	return v
 }

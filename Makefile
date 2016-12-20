@@ -59,5 +59,6 @@ clean:
 	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
 
 test:
-	go test ./...
-
+# The go list browse all the subdirectories, but will output the import path only if there are _test.go files
+# then we filter out the others and we also filter the vendor directory
+	go test $(glide nv)
