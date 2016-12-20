@@ -1,0 +1,4 @@
+package: github.com/lacion/iothub
+import:
+- package: github.com/spf13/viper
+- package: github.com/Sirupsen/logrus
