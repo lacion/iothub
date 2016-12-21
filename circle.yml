@@ -10,7 +10,7 @@ machine:
 dependencies:
   override:
     - go get github.com/Masterminds/glide
-    - make get deps
+    - make get-deps
 
 test:
   override:
