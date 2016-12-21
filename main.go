@@ -50,11 +50,11 @@ func main() {
 
 	authorized.Use(middlewares.Auth())
 
+	// Web Sockets
+
 	authorized.GET("/channel/:name/ws", func(c *gin.Context) {
 		m.HandleRequest(c.Writer, c.Request)
 	})
-
-	// Web Sockets
 
 	m.HandleConnect(func(s *melody.Session) {
 		log.WithFields(log.Fields{
@@ -85,7 +85,7 @@ func main() {
 			log.WithFields(log.Fields{
 				"EventName": "ws_client_message",
 				"Message":   msgStr,
-				"Room":      q.Request.URL.Path,
+				"Channel":   q.Request.URL.Path,
 			}).Debug("got msg: ", msgStr)
 
 			return q.Request.URL.Path == s.Request.URL.Path
