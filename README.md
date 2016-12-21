@@ -1,7 +1,8 @@
 # iothub
 
-IoT Hub for things
+[![Build Status](https://travis-ci.org/lacion/iothub.svg?branch=master)](https://travis-ci.org/lacion/iothub)
 
+IoT Hub for things
 
 this project is a multiroom echo server using websockets, you could have 
 any sensor sending data to a room and have any other device join that room to read
