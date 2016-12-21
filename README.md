@@ -42,7 +42,6 @@ a note on logging, debug is very verbose as it outputs all the messages the serv
 ``make test``
 
 ## Features
-
 - base project created with [cookiecutter-golang](https://github.com/lacion/cookiecutter-golang)
 - Uses [gin](https://github.com/gin-gonic/gin) for http/s
 - Uses [melody](github.com/olahol/melody) for websockets
