@@ -1,18 +1,18 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
+	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/olahol/melody"
-
 	"github.com/gin-gonic/contrib/ginrus"
-
+	"github.com/gin-gonic/gin"
 	"github.com/lacion/iothub/config"
 	"github.com/lacion/iothub/log"
 	"github.com/lacion/iothub/middlewares"
+	"github.com/olahol/melody"
 )
 
 func main() {
@@ -100,7 +100,43 @@ func main() {
 		"GitCommit":         GitCommit,
 		"Version":           Version,
 		"VersionPrerelease": VersionPrerelease,
+		"TLS": cfg.GetBool("secure"),
+		"ReadTimeout": cfg.GetDuration("read_timeout"),
+		"WriteTimeout": cfg.GetDuration("write_timeout"),
+		"MaxHeaderBytes": cfg.GetInt("max_header_bytes"),
 	}).Info("starting server and listening on ", cfg.GetString("listen_address"))
 
-	r.Run(cfg.GetString("listen_address"))
+	// ssl labs recomendations
+	tlscfg := &tls.Config{
+		// the bellow 3 options would get a perfect score in ssl labs test, but you will losse client compatibility
+		// MinVersion: tls.VersionTLS12,
+		// CurvePreferences: []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+		//CipherSuites: []uint16{
+		//	tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+		//	tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+		//	tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+		//	tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+		//},
+		PreferServerCipherSuites: true,
+	}
+
+	server := &http.Server{
+		Addr:           cfg.GetString("listen_address"),
+		Handler:        r,
+		ReadTimeout:    cfg.GetDuration("read_timeout"),
+		WriteTimeout:   cfg.GetDuration("write_timeout"),
+		MaxHeaderBytes: cfg.GetInt("max_header_bytes"),
+		TLSConfig:    tlscfg,
+		// the bellow line would get a perfect score in ssl labs test, but you will losse client compatibility
+		// also no http/2
+		// TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+	}
+
+	switch cfg.GetBool("secure") {
+	case true:
+		// Key or DH parameter strength >= 4096 bits (e.g., 4096)
+		log.Fatal(server.ListenAndServeTLS(cfg.GetString("cert_file"), cfg.GetString("key_file")))
+	default:
+		log.Fatal(server.ListenAndServe())
+	}
 }

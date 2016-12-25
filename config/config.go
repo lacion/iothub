@@ -53,5 +53,15 @@ func readViperConfig(appName string) *viper.Viper {
 	v.SetDefault("listen_address", ":5000")
 	v.SetDefault("secret", "887yff9898yfhuiew3489fy3hewfuig239f8ghew32yfh")
 
+	// HTTP Server Config
+	v.SetDefault("secure", false)
+	v.SetDefault("read_timeout", "0m10s")
+	v.SetDefault("write_timeout", "0m10s")
+	v.SetDefault("max_header_bytes", 1048576)
+
+	// TLS Config
+	v.SetDefault("cert_file", "ssl/server.crt")
+	v.SetDefault("key_file", "ssl/server.key")
+
 	return v
 }
